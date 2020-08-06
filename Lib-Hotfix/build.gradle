@@ -1,0 +1,32 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //tinker相关库
+    api("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}")
+    annotationProcessor("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}")
+    compileOnly("com.tencent.tinker:tinker-android-anno-support:${TINKER_VERSION}")
+    //compileOnly("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}")
+    api 'com.android.support:multidex:1.0.3'
+}

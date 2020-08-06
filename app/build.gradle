@@ -1,0 +1,64 @@
+apply plugin: 'com.android.application'
+apply from :'../config/tinker.gradle'
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        applicationId "com.stan.tinkersdkdemo"
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        multiDexEnabled true
+    }
+    signingConfigs {
+        release {
+            storeFile file('./keystore/release.keystore')
+            storePassword 'testres'
+            keyAlias = 'testres'
+            keyPassword 'testres'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false//加混淆
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    //权限
+    api 'pub.devrel:easypermissions:2.0.1'
+    implementation project(path: ':Lib-Hotfix')
+}
+
+//tinkerId 默认是根据 git上提交的记录SHA-1值
+def gitSha() {
+    try {
+        String gitRev = 'git rev-parse --short HEAD'.execute(null, project.rootDir).text.trim()
+        if (gitRev == null) {
+            throw new GradleException("can't get git rev, you should add git to system path or just input test value, such as 'testTinkerId'")
+        }
+        return gitRev
+    } catch (Exception e) {
+        throw new GradleException("can't get git rev, you should add git to system path or just input test value, such as 'testTinkerId'")
+    }
+}
+
+def getApkVersionName() {
+    return android.defaultConfig.versionName
+}
