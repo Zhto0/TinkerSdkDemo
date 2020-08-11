@@ -11,7 +11,6 @@ import com.mgtv.lib.tv.hotfix.HotFixApplicationLike;
  * Created by Stan on 2020-08-03.
  */
 
-//public class ProxyApp{}
 public class ProxyApp extends HotFixApplicationLike {
     private final String TAG = "tinkertest";
 

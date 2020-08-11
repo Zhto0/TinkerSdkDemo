@@ -1,2 +1,3 @@
 include ':app', ':Lib-Hotfix'
+
 rootProject.name='TinkerSdkDemo'

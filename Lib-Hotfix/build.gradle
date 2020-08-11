@@ -22,11 +22,18 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     //tinker相关库
-    api("com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}")
-    annotationProcessor("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}")
-    compileOnly("com.tencent.tinker:tinker-android-anno-support:${TINKER_VERSION}")
+//    api "com.tencent.tinker:tinker-android-lib:${TINKER_VERSION}"
+//    annotationProcessor("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}")
+//    compileOnly "com.tencent.tinker:tinker-android-anno-support:${TINKER_VERSION}"
     //compileOnly("com.tencent.tinker:tinker-android-anno:${TINKER_VERSION}")
     api 'com.android.support:multidex:1.0.3'
+    api files('libs/aosp-dexutils-1.9.14.7.jar')
+    api files('libs/bsdiff-util-1.9.14.7.jar')
+    annotationProcessor files('libs/tinker-android-anno-support-1.9.14.7.jar')
+//    api files('libs/tinker-android-lib.jar')
+    api files('libs/tinker-android-loader.jar')
+    api files('libs/tinker-commons-1.9.14.7.jar')
+    api files('libs/tinker-ziputils-1.9.14.7.jar')
 }

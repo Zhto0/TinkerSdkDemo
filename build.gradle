@@ -8,8 +8,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+//        classpath "com.github.dcendents:android-maven-gradle-plugin:2.1"
+//        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
         //添加gradle编译插件: tinker-patch-gradle-plugin
         classpath "com.tencent.tinker:tinker-patch-gradle-plugin:${TINKER_VERSION}"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath "com.github.dcendents:android-maven-gradle-plugin:2.1"
+        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -33,12 +39,33 @@ ext {
     middlelibVersion = 'release-1.3-SNAPSHOT'
     ipmsgLibVersion = 'ipmsg-tv-release-20191129'
     adSdkLibVersion = 'IMGADSDk'
-
-    //Dependencies
-    supportLibraryVersion = '27.1.1'
-    fastjsonVersion = '1.1.45.android'
-    eventbusVersion = '3.0.0'
-    eventbusAnnotationProcessorVersion = '3.0.1'
+//    javaVersion = JavaVersion.VERSION_1_7
+//
+//    //Dependencies
+//    supportLibraryVersion = '27.1.1'
+//    fastjsonVersion = '1.1.45.android'
+//    eventbusVersion = '3.0.0'
+//    eventbusAnnotationProcessorVersion = '3.0.1'
+//
+//    GROUP = 'com.tencent.tinker'
+//    VERSION_NAME = "${VERSION_NAME_PREFIX}${VERSION_NAME_SUFFIX}"
+//
+//    POM_PACKAGING = "pom"
+//    POM_DESCRIPTION= "tinker"
+//
+//    POM_URL = "https://github.com/Tencent/tinker"
+//    POM_SCM_URL = "https://github.com/Tencent/tinker.git"
+//    POM_ISSUE_URL = 'https://github.com/Tencent/tinker/issues'
+//
+//    POM_LICENCE_NAME = "BSD License"
+//    POM_LICENCE_URL = "https://opensource.org/licenses/BSD-3-Clause"
+//    POM_LICENCE_DIST = "repo"
+//
+//    POM_DEVELOPER_ID="Tencent Wechat"
+//    POM_DEVELOPER_NAME="Tencent Wechat, Inc."
+//
+//    BINTRAY_LICENCE= ['BSD 3-Clause']
+//    BINTRAY_ORGANIZATION = "tinker"
 }
 
 task clean(type: Delete) {
