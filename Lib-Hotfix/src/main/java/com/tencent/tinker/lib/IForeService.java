@@ -2,7 +2,6 @@ package com.tencent.tinker.lib;
 
 /**
  * Created by Stan on 2020-08-11.
- * Email zhanghongtao@mgtv.com
  */
 /*
  * This file is auto-generated.  DO NOT MODIFY.

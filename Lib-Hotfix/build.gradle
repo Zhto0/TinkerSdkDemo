@@ -31,9 +31,9 @@ dependencies {
     api 'com.android.support:multidex:1.0.3'
     api files('libs/aosp-dexutils-1.9.14.7.jar')
     api files('libs/bsdiff-util-1.9.14.7.jar')
-    annotationProcessor files('libs/tinker-android-anno-support-1.9.14.7.jar')
+    compileOnly files('libs/tinker-android-anno-support-1.9.14.7.jar')
 //    api files('libs/tinker-android-lib.jar')
-    api files('libs/tinker-android-loader.jar')
+//    api files('libs/tinker-android-loader.jar')
     api files('libs/tinker-commons-1.9.14.7.jar')
     api files('libs/tinker-ziputils-1.9.14.7.jar')
 }
