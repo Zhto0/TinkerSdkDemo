@@ -2,6 +2,7 @@ package com.stan.tinkersdkdemo;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         requestPermission();
 
         Log.d(TAG, getDir("tpatch", MODE_PRIVATE).getAbsolutePath());
+        Log.d(TAG, "path:" + Environment.getExternalStorageDirectory().getAbsolutePath());
         makeDir();
 
         //热修复修改点：文本替换
@@ -53,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 创建保存patch包的文件夹
      */
     public void makeDir() {
-        ///sdcard/Android/data/com.stan.tinkersdkdemo/cache/tpatch
-        mPatchDir = getExternalCacheDir().getAbsolutePath() + "/tpatch/";
+        // /sdcard/tpatch
+        mPatchDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tpatch/";
         //创建文件夹
         File file = new File(mPatchDir);
         if (!file.exists()) {
