@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         makeDir();
 
         //热修复修改点：文本替换
-        mText.setText("出现bug了");
-        //mText.setText("修复bug了");
+        //mText.setText("出现bug了");
+        mText.setText("修复bug了");
 
     }
 

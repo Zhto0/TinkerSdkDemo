@@ -4,9 +4,9 @@ def bakPath = file("${buildDir}/bakApk/") //指定基准文件存放位置
 ext {
     tinkerEnable = true //tinker功能开关
     tinkerID = "1.1"
-    tinkerOldApkPath = "${bakPath}/app-debug-0812-09-59-24.apk"
+    tinkerOldApkPath = "${bakPath}/app-release-0812-16-38-42.apk"
     tinkerApplyMappingPath = "${bakPath}/"
-    tinkerApplyResourcePath = "${bakPath}/app-debug-0812-09-59-24-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-release-0812-16-38-42-R.txt"
     tinkerBuildFlavorDirectory = "${bakPath}/"
 }
 
