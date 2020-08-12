@@ -129,6 +129,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
         boolean mainProcess = ShareTinkerInternals.isInMainProcess(app);
         boolean isRemoveNewVersion = patchInfo.isRemoveNewVersion;
 
+        //是否清除新patch
         if (mainProcess) {
             final String patchName = SharePatchFileUtil.getPatchVersionDirectory(newVersion);
             // So far new version is not loaded in main process and other processes.
@@ -180,7 +181,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
         boolean oatModeChanged = oatDex.equals(ShareConstants.CHANING_DEX_OPTIMIZE_PATH);
         oatDex = ShareTinkerInternals.getCurrentOatMode(app, oatDex);
         resultIntent.putExtra(ShareIntentUtil.INTENT_PATCH_OAT_DIR, oatDex);
-
+        // 根据版本变化和是否是主进程的条件决定是否加载新patch
         String version = oldVersion;
         if (versionChanged && mainProcess) {
             version = newVersion;
@@ -213,6 +214,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
 
         //tinker/patch.info/patch-641e634c/patch-641e634c.apk
         final String patchVersionFileRelPath = SharePatchFileUtil.getPatchVersionFile(version);
+        //获取diff patch文件
         File patchVersionFile = (patchVersionFileRelPath != null ? new File(patchVersionDirectoryFile.getAbsolutePath(), patchVersionFileRelPath) : null);
 
         if (!SharePatchFileUtil.isLegalFile(patchVersionFile)) {
@@ -223,7 +225,9 @@ public class TinkerLoader extends AbstractTinkerLoader {
         }
 
         ShareSecurityCheck securityCheck = new ShareSecurityCheck(app);
-
+        // 1. 检查补丁包 apk 的签名
+        // 2. 检查基准包的 tinker id 与补丁包中是否一致
+        // 3. 检查 tinker 设置与补丁包中的类型是否符合
         int returnCode = ShareTinkerInternals.checkTinkerPackage(app, tinkerFlag, patchVersionFile, securityCheck);
         if (returnCode != ShareConstants.ERROR_PACKAGE_CHECK_OK) {
             Log.w(TAG, "tryLoadPatchFiles:checkTinkerPackage");
@@ -235,6 +239,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
         resultIntent.putExtra(ShareIntentUtil.INTENT_PATCH_PACKAGE_CONFIG, securityCheck.getPackagePropertiesIfPresent());
 
         final boolean isEnabledForDex = ShareTinkerInternals.isTinkerEnabledForDex(tinkerFlag);
+        //com.huawei.ark.app.ArkApplicationInfo arthot是对华为的一种单独修复支持
         final boolean isArkHotRuning = ShareTinkerInternals.isArkHotRuning();
 
         if (!isArkHotRuning && isEnabledForDex) {
@@ -247,7 +252,9 @@ public class TinkerLoader extends AbstractTinkerLoader {
             }
         }
 
+
         final boolean isEnabledForArkHot = ShareTinkerInternals.isTinkerEnabledForArkHot(tinkerFlag);
+
         if (isArkHotRuning && isEnabledForArkHot) {
             boolean arkHotCheck = TinkerArkHotLoader.checkComplete(patchVersionDirectory, securityCheck, resultIntent);
             if (!arkHotCheck) {
@@ -270,6 +277,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
             }
         }
 
+
         //check resource
         final boolean isEnabledForResource = ShareTinkerInternals.isTinkerEnabledForResource(tinkerFlag);
         Log.w(TAG, "tryLoadPatchFiles:isEnabledForResource:" + isEnabledForResource);
@@ -281,6 +289,8 @@ public class TinkerLoader extends AbstractTinkerLoader {
                 return;
             }
         }
+
+        //art环境且系统做ota升级，需要重新loadDexFile,因为之前的odex会失效。
         //only work for art platform oat，because of interpret, refuse 4.4 art oat
         //android o use quicken default, we don't need to use interpret mode
         boolean isSystemOTA = ShareTinkerInternals.isVmArt()
@@ -309,6 +319,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
 
         //now we can load patch jar
         if (!isArkHotRuning && isEnabledForDex) {
+            //加载dex补丁
             boolean loadTinkerJars = TinkerDexLoader.loadTinkerJars(app, patchVersionDirectory, oatDex, resultIntent, isSystemOTA, isProtectedApp);
 
             if (isSystemOTA) {
@@ -342,6 +353,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
 
         //now we can load patch resource
         if (isEnabledForResource) {
+            //加载资源补丁
             boolean loadTinkerResources = TinkerResourceLoader.loadTinkerResources(app, patchVersionDirectory, resultIntent);
             if (!loadTinkerResources) {
                 Log.w(TAG, "tryLoadPatchFiles:onPatchLoadResourcesFail");
