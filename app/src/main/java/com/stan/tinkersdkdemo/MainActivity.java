@@ -10,8 +10,6 @@ import com.tencent.tinker.lib.tinker.Tinker;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import androidx.appcompat.app.AppCompatActivity;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -19,7 +17,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "tinkertest";
     private String mPatchDir;
-    int cout = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +30,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         makeDir();
 
         //热修复修改点：文本替换
-        //mText.setText("出现bug了");
-        mText.setText("修复bug了");
+        mText.setText("出现bug了");
+        //mText.setText("修复bug了");
 
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                cout++;
-                Log.d("timertest", cout + "");
-            }
-        }, 0, 3000);
     }
 
     /**

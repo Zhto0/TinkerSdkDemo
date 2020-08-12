@@ -62,7 +62,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
 
     private void tryLoadPatchFilesInternal(TinkerApplication app, Intent resultIntent) {
         final int tinkerFlag = app.getTinkerFlags();
-
+        //确保tinker enable 且非patch进程
         if (!ShareTinkerInternals.isTinkerEnabled(tinkerFlag)) {
             Log.w(TAG, "tryLoadPatchFiles: tinker is disable, just return");
             ShareIntentUtil.setIntentReturnCode(resultIntent, ShareConstants.ERROR_LOAD_DISABLE);
@@ -74,6 +74,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
             return;
         }
         //tinker
+        //PatchDirectory:/data/data/tinker.sample.android/tinker
         File patchDirectoryFile = SharePatchFileUtil.getPatchDirectory(app);
         if (patchDirectoryFile == null) {
             Log.w(TAG, "tryLoadPatchFiles:getPatchDirectory == null");
@@ -82,7 +83,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
             return;
         }
         String patchDirectoryPath = patchDirectoryFile.getAbsolutePath();
-
+        // 检查tinker目录是否存在
         //check patch directory whether exist
         if (!patchDirectoryFile.exists()) {
             Log.w(TAG, "tryLoadPatchFiles:patch dir not exist:" + patchDirectoryPath);
@@ -90,7 +91,7 @@ public class TinkerLoader extends AbstractTinkerLoader {
             return;
         }
 
-        //tinker/patch.info
+        //tinker/patch.info 补丁信息文件
         File patchInfoFile = SharePatchFileUtil.getPatchInfoFile(patchDirectoryPath);
 
         //check patch info file whether exist
@@ -99,6 +100,8 @@ public class TinkerLoader extends AbstractTinkerLoader {
             ShareIntentUtil.setIntentReturnCode(resultIntent, ShareConstants.ERROR_LOAD_PATCH_INFO_NOT_EXIST);
             return;
         }
+
+        //获取patch.info并包装为SharePatchInfo
         //old = 641e634c5b8f1649c75caf73794acbdf
         //new = 2c150d8560334966952678930ba67fa8
         File patchInfoLockFile = SharePatchFileUtil.getPatchInfoLockFile(patchDirectoryPath);
