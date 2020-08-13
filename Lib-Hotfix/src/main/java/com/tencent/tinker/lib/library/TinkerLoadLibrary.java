@@ -136,11 +136,11 @@ public class TinkerLoadLibrary {
      */
     public static boolean loadLibraryFromTinker(Context context, String relativePath, String libName) throws UnsatisfiedLinkError {
         final Tinker tinker = Tinker.with(context);
-
+        //检查加载文件前后缀
         libName = libName.startsWith("lib") ? libName : "lib" + libName;
         libName = libName.endsWith(".so") ? libName : libName + ".so";
         String relativeLibPath = relativePath + "/" + libName;
-
+        //当前tinker开启了so补丁修复功能 且 完成 补丁加载之后
         //TODO we should add cpu abi, and the real path later
         if (tinker.isEnabledForNativeLib() && tinker.isTinkerLoaded()) {
             TinkerLoadResult loadResult = tinker.getTinkerLoadResultIfPresent();
@@ -161,6 +161,7 @@ public class TinkerLoadLibrary {
                 if (verifyMd5 && !SharePatchFileUtil.verifyFileMd5(library, loadResult.libs.get(name))) {
                     tinker.getLoadReporter().onLoadFileMd5Mismatch(library, ShareConstants.TYPE_LIBRARY);
                 } else {
+                    //加载补丁
                     System.load(patchLibraryPath);
                     TinkerLog.i(TAG, "loadLibraryFromTinker success:" + patchLibraryPath);
                     return true;

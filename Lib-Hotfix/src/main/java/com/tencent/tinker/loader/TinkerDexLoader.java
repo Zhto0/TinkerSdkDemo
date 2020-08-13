@@ -68,7 +68,7 @@ public class TinkerDexLoader {
             Log.w(TAG, "there is no dex to load");
             return true;
         }
-
+        //dalvik.system.PathClassLoader
         ClassLoader classLoader = TinkerDexLoader.class.getClassLoader();
         if (classLoader != null) {
             Log.i(TAG, "classloader: " + classLoader.toString());
@@ -77,6 +77,7 @@ public class TinkerDexLoader {
             ShareIntentUtil.setIntentReturnCode(intentResult, ShareConstants.ERROR_LOAD_PATCH_VERSION_DEX_CLASSLOADER_NULL);
             return false;
         }
+        // /data/user/0/com.stan.tinkersdkdemo/tinker/patch-f9dfd7d4/dex/tinker_classN.apk
         String dexPath = directory + "/" + DEX_PATH + "/";
 
         ArrayList<File> legalFiles = new ArrayList<>();
@@ -89,7 +90,7 @@ public class TinkerDexLoader {
 
             String path = dexPath + info.realName;
             File file = new File(path);
-
+            //对每个dex进行md5校验
             if (application.isTinkerLoadVerifyFlag()) {
                 long start = System.currentTimeMillis();
                 String checkMd5 = getInfoMd5(info);
@@ -100,10 +101,12 @@ public class TinkerDexLoader {
                         file.getAbsolutePath());
                     return false;
                 }
+
                 Log.i(TAG, "verify dex file:" + file.getPath() + " md5, use time: " + (System.currentTimeMillis() - start));
             }
             legalFiles.add(file);
         }
+        //对apk进行md5校验
         // verify merge classN.apk
         if (isVmArt && !classNDexInfo.isEmpty()) {
             File classNFile = new File(dexPath + ShareConstants.CLASS_N_APK_NAME);
@@ -119,12 +122,13 @@ public class TinkerDexLoader {
                     }
                 }
             }
+            //verify dex file:/data/user/0/com.stan.tinkersdkdemo/tinker/patch-f9dfd7d4/dex/tinker_classN.apk md5, use time: 0
             Log.i(TAG, "verify dex file:" + classNFile.getPath() + " md5, use time: " + (System.currentTimeMillis() - start));
 
             legalFiles.add(classNFile);
         }
         File optimizeDir = new File(directory + "/" + oatDir);
-
+        //如果系统ota升级了，删除oat文件，重新编译
         if (isSystemOTA) {
             final boolean[] parallelOTAResult = {true};
             final Throwable[] parallelOTAThrowable = new Throwable[1];
@@ -144,13 +148,13 @@ public class TinkerDexLoader {
                 return false;
                 // }
             }
-
+            //删除原来的oat文件夹
             deleteOutOfDateOATFile(directory);
 
             Log.w(TAG, "systemOTA, try parallel oat dexes, targetISA:" + targetISA);
             // change dir
             optimizeDir = new File(directory + "/" + INTERPRET_DEX_OPTIMIZE_PATH);
-
+            //触发dex2oat编译
             TinkerDexOptimizer.optimizeAll(
                 application, legalFiles, optimizeDir, true, targetISA,
                 new TinkerDexOptimizer.ResultCallback() {
@@ -186,6 +190,7 @@ public class TinkerDexLoader {
             }
         }
         try {
+            //加载dex
             SystemClassLoaderAdder.installDexes(application, classLoader, optimizeDir, legalFiles, isProtectedApp);
         } catch (Throwable e) {
             Log.e(TAG, "install dexes failed");

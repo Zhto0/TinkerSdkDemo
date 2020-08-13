@@ -178,12 +178,14 @@ class TinkerResourcePatcher {
         final ApplicationInfo appInfo = context.getApplicationInfo();
 
         final Field[] packagesFields;
+        //利用 packagesFiled 反射获取 LoadedApk 对象，<27外加resourcePackagesFiled
         if (Build.VERSION.SDK_INT < 27) {
             packagesFields = new Field[]{packagesFiled, resourcePackagesFiled};
         } else {
             packagesFields = new Field[]{packagesFiled};
         }
         for (Field field : packagesFields) {
+            //value = Map<String, WeakReference<LoadedApk>>
             final Object value = field.get(currentActivityThread);
 
             for (Map.Entry<String, WeakReference<?>> entry
@@ -192,13 +194,16 @@ class TinkerResourcePatcher {
                 if (loadedApk == null) {
                     continue;
                 }
+                //从 LoadedApk 对象中获取 mResDir 属性, 即资源文件路径
                 final String resDirPath = (String) resDir.get(loadedApk);
+                Log.i(TAG, "resDirPath :" + resDirPath);
                 if (appInfo.sourceDir.equals(resDirPath)) {
+                    //将修复资源放入资源文件路径
                     resDir.set(loadedApk, externalResourceFile);
                 }
             }
         }
-
+         //创建一个新的 AssetManager 实例，并把资源补丁apk加载进 AssetManager 中
         // Create a new AssetManager instance and point it to the resources installed under
         if (((Integer) addAssetPathMethod.invoke(newAssetManager, externalResourceFile)) == 0) {
             throw new IllegalStateException("Could not create new AssetManager");
@@ -220,6 +225,7 @@ class TinkerResourcePatcher {
 
         // Kitkat needs this method call, Lollipop doesn't. However, it doesn't seem to cause any harm
         // in L, so we do it unconditionally.
+        /// 创建出 AssetManager 后，调用 ensureStringBlocks 来确保资源的字符串索引创建出来
         if (stringBlocksField != null && ensureStringBlocksMethod != null) {
             stringBlocksField.set(newAssetManager, null);
             ensureStringBlocksMethod.invoke(newAssetManager);
@@ -232,18 +238,18 @@ class TinkerResourcePatcher {
             }
             // Set the AssetManager of the Resources instance to our brand new one
             try {
-                //pre-N
+                //pre-N 把原来 resources 的 mAssets 属性替换成新的 AssetManager 对象
                 assetsFiled.set(resources, newAssetManager);
             } catch (Throwable ignore) {
-                // N
+                // N之后 mAssets 属性被放在了 ResourcesImpl 中 所以需要先获取 ResourcesImpl 对象再进行替换
                 final Object resourceImpl = resourcesImplFiled.get(resources);
                 // for Huawei HwResourcesImpl
                 final Field implAssets = findField(resourceImpl, "mAssets");
                 implAssets.set(resourceImpl, newAssetManager);
             }
-
+            //在 Resource 中会维护一个 mTypedArrayPool 资源池,来减少频繁访问 AssetManager ，所以需要去释放这个资源池，否则取到的都是缓存
             clearPreloadTypedArrayIssue(resources);
-
+            // 最后调用 updateConfiguration 方法来确保资源更新了
             resources.updateConfiguration(resources.getConfiguration(), resources.getDisplayMetrics());
         }
 
