@@ -14,7 +14,7 @@ ext {
 }
 4 执行tinkerPatchRelease生成patch差分包。
 5 安装首次assembleRelease在bakApk中生成的apk，同时启动app，
-这样会创建 /sdcard/Android/data/com.stan.tinkersdkdemo/cache/tpatch目录。
+这样会创建 /sdcard/tpatch目录。
 6 将生成的patch_singed.apk push到上面的目录中。
 7 点击加载patch。
 8 重新启动app修复生效。
